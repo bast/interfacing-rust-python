@@ -1,2 +1,1 @@
-# interfacing-rust-python
-Slides and material for "Interfacing Rust and Python"
+# Slides and material for "Interfacing Python and Rust"

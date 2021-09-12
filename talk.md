@@ -1,0 +1,10 @@
+- History of Rust
+- Why Rust?
+- Why Rust and Python?
+- Tools: PyO3 and Maturin
+- Examples:
+  - Nearest distances for a set of points
+    - Motivation: simple data structures, parallelization
+  - Simple bank account
+    - Motivation: show how to deal with objects across language boundaries
+- Deploying to PyPI with GitHub Actions: make it pip installable

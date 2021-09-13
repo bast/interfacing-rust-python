@@ -1,6 +1,6 @@
 class: center, middle
 
-# Title
+# Interfacing Rust and Python
 
 ## Radovan Bast [@\_\_radovan](https://twitter.com/__radovan)
 

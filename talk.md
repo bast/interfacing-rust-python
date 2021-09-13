@@ -9,13 +9,39 @@ UiT The Arctic University of Norway
 
 ---
 
+class: left, middle, inverse
+
+# .strike[How to] interface Rust and Python
+
+# How I
+
+## There are many ways, interested in learning how to improve things
+
+---
+
+## About me
+
+.left-column40[
+<img src="img/avatar.jpeg" style="width: 70%;"/>
+]
+
+.right-column60[
+- Theoretical chemist turned research software engineer.
+- I write research software and teach programming to researchers and lead the
+  [CodeRefinery project](https://coderefinery.org).
+- Developing libraries for computational chemistry and computational geometry
+  (used in oceanography).
+]
+
+---
+
 ## Plan for today
 
 - History of Rust
 - Why Rust?
 - Why Rust and Python?
 - Tools: [PyO3](https://pyo3.rs/) and [Maturin](https://github.com/PyO3/maturin)
-- Examples
+- Examples (links below)
 - Deploying to PyPI with GitHub Actions: make it pip installable
 
 
@@ -37,29 +63,101 @@ UiT The Arctic University of Norway
 - Since 2011 `rustc` is compiled using `rustc`.
 - `rustc` uses LLVM as its back end.
 - The History of Rust: https://www.youtube.com/watch?v=79PSagCD_AY
-- Firefox (components Servo and Quantum) written in Rust.
-- Ad block engine in [Brave](https://brave.com/).
+- Since 2021: [Rust Foundation](https://foundation.rust-lang.org/), independent
+  non-profit organization to steward the Rust programming language and
+  ecosystem
+
+
+### Great every-day tools
+
 - `exa`, `ripgrep`, `bat`, and `fd` written in Rust (you really want these tools!).
-- Great overview of tools written in Rust: https://www.wezm.net/v2/posts/2020/100-rust-binaries/
-- [Discord](https://discord.com/) uses Rust for some of its back end.
+- https://www.wezm.net/v2/posts/2020/100-rust-binaries/
 
 ---
 
-## Why Rust
+class: center, middle, inverse
 
-- "A language empowering everyone to build reliable and efficient software." (https://www.rust-lang.org)
-- Fast but also safe
-- Zero cost abstractions
-- Type system
-- Compiler catches most errors (if it compiles, it often just works)
-- Compiler provides helpful error messages
-- Memory safety
-- Thread safety
-- Private and immutable by default
-- Great tooling (testing, documentation, auto-formatter, dependency management, package registry, no makefiles needed)
-- Community
+# Why Rust?
+
+---
+
+class: center, middle
+
+.quote["There are only two kinds of languages: the ones people complain about and the ones nobody uses."]
+
+Bjarne Stroustrup
+
+---
+
+## Why [Rust](https://www.rust-lang.org/)? (1/2)
+
+- First stable release: 2015
 - Most-loved programming language in the 2016, 2017, 2018, 2019, and 2020
   [Stack Overflow annual surveys](https://insights.stackoverflow.com/survey/)
+
+- .emph[Fast but also safe]
+
+- Memory safety
+
+- Thread safety
+
+- Type system and type safety
+
+---
+
+## Why [Rust](https://www.rust-lang.org/)? (2/2)
+
+- Zero cost abstractions
+
+- Compiler catches most errors (if it compiles, it often just works)
+
+- Compiler provides helpful error messages
+
+- Private and immutable by default
+
+- .emph[Great tooling] (testing, documentation, auto-formatter, dependency management, package registry, no makefiles needed)
+
+---
+
+## Why [Rust](https://www.rust-lang.org/)? (FAQ)
+
+.quote["But is it as fast as Fortran/C/C++?"]
+- **Yes!**
+
+.quote["How about math/scientific libraries?"]
+- **No problem**. It has very good inter-op with C (and Python) so you can link to any C interface.
+
+.quote["Do we need to rewrite our Fortran code now?"]
+- **No**. Rust can interface to Fortran via `iso_c_binding`.
+
+.quote["How about shared-memory parallelization?"]
+- **Easier**. And thread safe.
+
+.quote["How about MPI?"]
+- A **bit too early** for this. I would do the MPI layer with Python/C/C++/Fortran and
+  the intra-node with Rust.
+
+---
+
+## Memory model
+
+- No explicit allocation and deallocation.
+- No garbage collector either.
+- Each value in Rust has an owner and there can only be one owner at a time.
+- When the owner goes out of scope, the value is dropped.
+- Rust knows the size of all stack allocations at compile time.
+
+This does not compile:
+```rust
+let s1 = String::from("hello");
+let s2 = s1;
+
+println!("{}, world!", s1);
+```
+
+- Rust's memory is managed a bit like money: one owner, it can be borrowed.
+- We can borrow references: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#references-and-borrowing
+- At any given time, you can have either one mutable reference or any number of immutable references.
 
 ---
 
@@ -87,60 +185,87 @@ UiT The Arctic University of Norway
 
 ---
 
-## Memory model
+class: center, middle, inverse
 
-- No explicit allocation and deallocation.
-- No garbage collector either.
-- Each value in Rust has an owner and there can only be one owner at a time.
-- When the owner goes out of scope, the value is dropped.
-- Rust knows the size of all stack allocations at compile time.
-
-This does not compile:
-```rust
-let s1 = String::from("hello");
-let s2 = s1;
-
-println!("{}, world!", s1);
-```
-
-- Rust's memory is managed a bit like money: one owner, it can be borrowed.
-- We can borrow references: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#references-and-borrowing
-- At any given time, you can have either one mutable reference or any number of immutable references.
+# Why Rust and Python?
 
 ---
 
-## Installing Rust
+## Why Rust and Python?
 
-Preferred way to install Rust for most developers: https://www.rust-lang.org/tools/install
+### Take the best of both worlds
 
-Verify your installations of `cargo` and `rustc`:
-```
-$ cargo --version
-cargo 1.47.0 (f3c7e066a 2020-08-28)
+- Python has a huge ecosystem and following
+- Many people are familiar with `pip install`
+- Speed up a bottleneck in the Python code
+- Prototype an idea in Python before writing it in Rust
+- "Bullet-proofing" a prototype by porting to rust (making it typesafe)
 
-$ rustc --version
-rustc 1.47.0 (18bf6b4f0 2020-10-07)
-```
+
+### Often we do not start from scratch
+
+- .emph[Connect existing codes]
 
 ---
 
-## Hands-on demo
+## How: tools
 
-In this demo we will approximate pi by generating random points and computing
-their distance to origin:<sup>[1](#footnote1)</sup>
+- PyO3 (Pythonium Trioxide): Rust bindings for the Python interpreter
+  - https://pyo3.rs/
+  - https://github.com/PyO3/pyo3
+- [Maturin](https://github.com/PyO3/maturin): build and publish crates with
+  pyo3
 
-![random points](img/pi_Monte-Carlo.gif)
 
-Tasks/discussion points:
-- Show how to bootstrap a project with `cargo new`
-- Step out of the newly bootstrapped project
-- Clone the code (this repository)
-- Browse and discuss the sources
-- Compile the sources with `cargo check`
-- Compare `cargo check` and `cargo build`
-- Discuss `cargo run`
-- Experiment with `cargo fmt`
-- Run the tests with `cargo test`
-- Generate optimized version with `cargo build --release`
-- Generate the documentation with `cargo doc`
-- Discuss `cargo publish` and https://crates.io (the Rust package registry)
+### Alternatives
+
+- [cffi](https://cffi.readthedocs.io/) on Python side and Rust just talks to C
+  interface
+- Using [ctypes](https://docs.python.org/3/library/ctypes.html)
+  ([examples](http://jakegoulding.com/rust-ffi-omnibus/))
+- ... ?
+
+---
+
+## Examples
+
+- [Nearest distances for a set of points](https://github.com/bast/pyo3-example-distances)
+    - Motivation: simple data structures, parallelization
+- [Simple bank account](https://github.com/bast/pyo3-example-accounts)
+    - Motivation: show how to deal with objects across language boundaries
+
+## We do this as demo/ hands-on
+
+---
+
+class: center, middle, inverse
+
+# Deploying to PyPI with GitHub Actions
+
+## Make it pip installable
+
+---
+
+## Deploying to PyPI with GitHub Actions
+
+- Make it pip installable
+- [Example workflow](https://github.com/bast/pyo3-example-accounts/blob/main/.github/workflows/package.yml)
+
+```
+$ pip install -i https://test.pypi.org/simple/ accounts
+```
+
+Then this should work:
+```python
+from accounts import Account
+
+account1 = Account(100.0)
+account2 = Account(100.0)
+
+account1.deposit(50.0)
+
+account2.withdraw(25.0)
+
+print("balance of account 1:", account1.get_balance())
+print("balance of account 2:", account2.get_balance())
+```

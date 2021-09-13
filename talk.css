@@ -115,6 +115,10 @@ a {
   background-color: #c8deff;
 }
 
+.strike {
+  text-decoration: line-through;
+}
+
 .remark {
   color: #8e44ad;
   font-style: italic;

@@ -2,6 +2,14 @@ class: center, middle
 
 # Interfacing Rust and Python
 
+<img src="img/python.jpg" style="width: 100%;"/>
+
+---
+
+class: center, middle
+
+# Interfacing Rust and Python
+
 ## Radovan Bast [@\_\_radovan](https://twitter.com/__radovan)
 
 Nordic e-Infrastructure Collaboration/

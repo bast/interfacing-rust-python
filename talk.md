@@ -115,6 +115,8 @@ Bjarne Stroustrup
 
 ## Why [Rust](https://www.rust-lang.org/)? (2/2)
 
+<img src="img/works.jpg" style="width: 40%;"/>
+
 - Zero cost abstractions
 
 - Compiler catches most errors (if it compiles, it often just works)

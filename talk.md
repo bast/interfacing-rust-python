@@ -221,6 +221,7 @@ class: center, middle, inverse
 - PyO3 (Pythonium Trioxide): Rust bindings for the Python interpreter
   - https://pyo3.rs/
   - https://github.com/PyO3/pyo3
+  - Very helpful community
 - [Maturin](https://github.com/PyO3/maturin): build and publish crates with
   pyo3
 

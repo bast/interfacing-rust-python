@@ -226,6 +226,8 @@ class: center, middle, inverse
   - Very helpful community
 - [Maturin](https://github.com/PyO3/maturin): build and publish crates with
   pyo3
+  - Can build the Python package into a virtual environment
+  - Can publish to PyPI
 
 
 ### Alternatives
